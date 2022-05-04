@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface MemberJpaRepo extends JpaRepository<Member, Long> {
 
 	// 회원 조회
-	@Query(value = "SELECT m.id, m.pw, m.name, m.phone FROM Member m WHERE m.id = :id")
+	@Query(value = "SELECT m FROM Member m WHERE m.id = :id")
 	public Member findUser(@Param(value = "id") String id);
 	
 	// 로그인

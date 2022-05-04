@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,10 +31,22 @@ public class MemberController {
 	public List<Member> memberList() {
 		return memberJpaRepo.findAll();
 	}
-	
+
 	@GetMapping(value = "/info")
-	public String memberInfo() {
-		return "";
+	public Map<String, Object> memberInfo(@RequestParam(value = "id") String id) {
+		Map<String, Object> map = new HashMap<>();
+		int cnt = memberJpaRepo.countUserId(id);
+		try {
+			if (cnt == 1) {
+				Member m = memberJpaRepo.findUser(id);
+				map.put("userInfo", m);
+			} else {
+				map.put("resultInfo", new ResultInfo(false, "E-001", "등록되지 않은 아이디입니다."));
+			}
+		} catch (Exception e) {
+			map.put("resultInfo", new ResultInfo(false, "E-999", "일시적인 오류로 서비스 접속에 실패했습니다. 잠시 후 다시 시도해 주세요."));
+		}
+		return map;
 	}
 
 	@PostMapping(value = "/join")
@@ -133,4 +146,21 @@ public class MemberController {
 		}
 		return map;
 	}
+
+//	@DeleteMapping(value = "/member")
+//	public Map<String, Object> memberDelete2(@RequestParam(value = "id") String id) {
+//		Map<String, Object> map = new HashMap<>();
+//		int cnt = memberJpaRepo.countUserId(id);
+//		try {
+//			if (cnt == 0) {
+//				map.put("resultInfo", new ResultInfo(false, "E-005", "존재하지 않는 사용자입니다."));
+//			} else {
+//				memberJpaRepo.deleteUser(id);
+//				map.put("resultInfo", new ResultInfo(true, "S", "회원탈퇴가 완료되었습니다."));
+//			}
+//		} catch (Exception e) {
+//			map.put("resultInfo", new ResultInfo(false, "E-999", "서버 통신이 원활하지 않습니다."));
+//		}
+//		return map;
+//	}
 }
