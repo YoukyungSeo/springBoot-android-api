@@ -33,8 +33,20 @@ public class MemberController {
 	}
 	
 	@GetMapping(value = "/info")
-	public String memberInfo() {
-		return "";
+	public Map<String, Object> memberInfo(@RequestParam(value = "id") String id) {
+		Map<String, Object> map = new HashMap<>();
+		int cnt = memberJpaRepo.countUserId(id);
+		try {
+			if (cnt == 1) {
+				Member m = memberJpaRepo.findUser(id);
+				map.put("userInfo", m);
+			} else {
+				map.put("resultInfo", new ResultInfo(false, "E-001", "등록되지 않은 아이디입니다."));
+			}
+		} catch (Exception e) {
+			map.put("resultInfo", new ResultInfo(false, "E-999", "일시적인 오류로 서비스 접속에 실패했습니다. 잠시 후 다시 시도해 주세요."));
+		}
+		return map;
 	}
 
 	@PostMapping
@@ -110,7 +122,7 @@ public class MemberController {
 				map.put("resultInfo", new ResultInfo(false, "E-005", "존재하지 않는 사용자입니다."));
 			} else {
 				memberJpaRepo.updateUser(member.getId(), member.getPw(), member.getName(), member.getPhone());
-				map.put("resultInfo", new ResultInfo(true, "S", "수정이 완료되었습니다."));
+				map.put("resultInfo", new ResultInfo(true, "S", "회원 정보 수정이 완료되었습니다."));
 			}
 		} catch (Exception e) {
 			map.put("resultInfo", new ResultInfo(false, "E-999", "일시적인 오류로 서비스 접속에 실패했습니다. 잠시 후 다시 시도해 주세요."));
@@ -127,7 +139,7 @@ public class MemberController {
 				map.put("resultInfo", new ResultInfo(false, "E-005", "존재하지 않는 사용자입니다."));
 			} else {
 				memberJpaRepo.deleteUser(member.getId());
-				map.put("resultInfo", new ResultInfo(true, "S", "회원탈퇴가 완료되었습니다."));
+				map.put("resultInfo", new ResultInfo(true, "S", "회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다."));
 			}
 		} catch (Exception e) {
 			map.put("resultInfo", new ResultInfo(false, "E-999", "일시적인 오류로 서비스 접속에 실패했습니다. 잠시 후 다시 시도해 주세요."));
