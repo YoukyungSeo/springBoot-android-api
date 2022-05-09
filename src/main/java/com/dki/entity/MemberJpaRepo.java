@@ -14,7 +14,7 @@ public interface MemberJpaRepo extends JpaRepository<Member, Long> {
 	// 회원 조회
 	@Query(value = "SELECT m FROM Member m WHERE m.id = :id")
 	public Member findUser(@Param(value = "id") String id);
-	
+
 	// 로그인
 	@Query(value = "SELECT m FROM Member m WHERE m.id = :id AND m.pw = :pw")
 	public Member isLogin(@Param(value = "id") String id, @Param(value = "pw") String pw);
@@ -39,5 +39,5 @@ public interface MemberJpaRepo extends JpaRepository<Member, Long> {
 	@Transactional
 	public void updateUser(@Param(value = "id") String id, @Param(value = "pw") String pw,
 			@Param(value = "name") String name, @Param(value = "phone") String phone);
-	
+
 }
