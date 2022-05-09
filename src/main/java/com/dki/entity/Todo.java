@@ -25,9 +25,9 @@ public class Todo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long num;
-	
+
 	private boolean completed;
-	
+
 	@NotEmpty
 	private String item;
 }

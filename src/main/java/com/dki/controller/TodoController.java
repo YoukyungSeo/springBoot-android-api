@@ -18,15 +18,15 @@ import com.dki.entity.TodoJpaRepo;
 @RestController
 @RequestMapping(value = "/todo")
 public class TodoController {
-	
+
 	@Autowired
 	private TodoJpaRepo todoJpaRepo;
-	
-	@GetMapping(value="/list")
+
+	@GetMapping(value = "/list")
 	public List<Todo> listTodo() {
 		return todoJpaRepo.findAll();
 	}
-	
+
 	@PostMapping
 	public Todo registerTodo(@RequestBody Todo todo) {
 		return todoJpaRepo.save(todo);
@@ -37,6 +37,5 @@ public class TodoController {
 		todoJpaRepo.deleteTodo(todo.getItem());
 		return "할 일 삭제 완료";
 	}
-	
 
 }

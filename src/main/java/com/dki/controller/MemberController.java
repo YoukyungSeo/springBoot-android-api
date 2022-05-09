@@ -31,7 +31,7 @@ public class MemberController {
 	public List<Member> memberList() {
 		return memberJpaRepo.findAll();
 	}
-	
+
 	@GetMapping(value = "/info")
 	public Map<String, Object> memberInfo(@RequestParam(value = "id") String id) {
 		Map<String, Object> map = new HashMap<>();
@@ -66,7 +66,7 @@ public class MemberController {
 		return map;
 	}
 
-	@PostMapping(value="/idcheck")
+	@PostMapping(value = "/idcheck")
 	public Map<String, Object> memberIdCheck(@RequestBody Member member) {
 		Map<String, Object> map = new HashMap<>();
 		int cnt = memberJpaRepo.countUserId(member.getId());
@@ -129,7 +129,7 @@ public class MemberController {
 		}
 		return map;
 	}
-	
+
 	@DeleteMapping
 	public Map<String, Object> memberDelete2(@RequestBody Member member) {
 		Map<String, Object> map = new HashMap<>();

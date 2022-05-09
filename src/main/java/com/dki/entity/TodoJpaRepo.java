@@ -8,12 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface TodoJpaRepo extends JpaRepository<Todo, Long> {
-	
+
 	@Query(value = "DELETE FROM Todo t WHERE t.item = :item")
 	@Modifying
 	@Transactional
 	public void deleteTodo(@Param(value = "item") String item);
-	
-	
-	
+
 }
