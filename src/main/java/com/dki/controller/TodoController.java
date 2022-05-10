@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dki.entity.Todo;
-import com.dki.entity.TodoJpaRepo;
+import com.dki.repository.TodoJpaRepo;
 
 @CrossOrigin
 @RestController
@@ -37,14 +37,20 @@ public class TodoController {
 
 	@DeleteMapping
 	public String deleteTodo(@RequestParam (value="item") String item) {
-		System.out.println(item);
 		todoJpaRepo.deleteTodo(item);
 		return "할 일 삭제 완료";
 	}
 
 	@PutMapping
 	public String toggleTodo(@RequestBody Todo todo) {
-		return "할일 체크 완료";
+		todoJpaRepo.toggleTodo(todo.getItem(), todo.isCompleted());
+		return "할 일 체크 완료";
+	}
+	
+	@GetMapping
+	public String clearAllTodo() {
+		todoJpaRepo.deleteAll();
+		return "전체 삭제 완료";
 	}
 
 }

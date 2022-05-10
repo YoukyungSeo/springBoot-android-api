@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dki.entity.Member;
-import com.dki.entity.MemberJpaRepo;
 import com.dki.entity.ResultInfo;
+import com.dki.repository.MemberJpaRepo;
 
 @RestController
 @RequestMapping(value = "/member")
