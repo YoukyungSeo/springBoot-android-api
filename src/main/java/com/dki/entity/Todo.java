@@ -1,5 +1,6 @@
 package com.dki.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,7 +26,8 @@ public class Todo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long num;
-
+	
+	@Column
 	private boolean completed;
 
 	@NotEmpty
