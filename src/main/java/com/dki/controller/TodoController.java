@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dki.entity.Todo;
 import com.dki.repository.TodoJpaRepo;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/todo")
@@ -27,11 +30,14 @@ public class TodoController {
 
 	@GetMapping(value = "/list")
 	public List<Todo> listTodo() {
+		log.info("7t67fg7t76ty7");
 		return todoJpaRepo.findAll();
 	}
 
 	@PostMapping
 	public Todo registerTodo(@RequestBody Todo todo) {
+		System.out.println("바보~~~");
+		log.info("7t67fg7t76ty7");
 		return todoJpaRepo.save(todo);
 	}
 

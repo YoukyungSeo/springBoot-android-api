@@ -20,6 +20,8 @@ import com.dki.entity.Member;
 import com.dki.entity.ResultInfo;
 import com.dki.repository.MemberJpaRepo;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping(value = "/member")
 public class MemberController {
