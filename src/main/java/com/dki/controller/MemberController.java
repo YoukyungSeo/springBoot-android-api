@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,11 @@ import com.dki.repository.MemberJpaRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.security.NoSuchAlgorithmException;
+import com.dki.util.HashUtils;
+
+@Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping(value = "/member")
 public class MemberController {
@@ -38,23 +44,32 @@ public class MemberController {
 	public Map<String, Object> memberInfo(@RequestParam(value = "id") String id) {
 		Map<String, Object> map = new HashMap<>();
 		int cnt = memberJpaRepo.countUserId(id);
+		log.info("memberInfo1");
 		try {
 			if (cnt == 1) {
+				log.info("memberInfo2");
 				Member m = memberJpaRepo.findUser(id);
+				log.info("memberInfo3");
 				map.put("userInfo", m);
 			} else {
+				log.info("memberInfo4");
 				map.put("resultInfo", new ResultInfo(false, "E-001", "등록되지 않은 아이디입니다."));
 			}
 		} catch (Exception e) {
 			map.put("resultInfo", new ResultInfo(false, "E-999", "일시적인 오류로 서비스 접속에 실패했습니다. 잠시 후 다시 시도해 주세요."));
+			log.info(e.toString());
 		}
 		return map;
 	}
 
 	@PostMapping
-	public Map<String, Object> memberJoin(@RequestBody Member member) {
+	public Map<String, Object> memberJoin(@RequestBody Member member) throws NoSuchAlgorithmException {
 		Map<String, Object> map = new HashMap<>();
 		try {
+			HashUtils hashUtils = new HashUtils();
+			String password = member.getPw();
+			System.out.println(password);
+			member.setPw(hashUtils.getSHA256Encrypt(password));
 			ResultInfo result = (ResultInfo) memberIdCheck(member).get("resultInfo");
 			if (result.getResult() == true) {
 				memberJpaRepo.save(member);
@@ -75,7 +90,11 @@ public class MemberController {
 		if (cnt == 1) {
 			map.put("resultInfo", new ResultInfo(false, "E-003", "이미 사용중인 아이디입니다."));
 		} else {
-			map.put("resultInfo", new ResultInfo(true, "S", "사용할 수 있는 아이디입니다."));
+			if ("".equals(member.getId().trim())) {
+				map.put("resultInfo", new ResultInfo(false, "E-006", "아이디를 입력해주세요."));
+			} else {
+				map.put("resultInfo", new ResultInfo(true, "S", "사용할 수 있는 아이디입니다."));
+			}
 		}
 		return map;
 	}
@@ -88,14 +107,13 @@ public class MemberController {
 	}
 
 	@PostMapping(value = "/login")
-	public Map<String, Object> memberLoginPost(@RequestBody Member member) {
-
+	public Map<String, Object> memberLoginPost(@RequestBody Member member) throws NoSuchAlgorithmException {
+		HashUtils hashUtils = new HashUtils();
 		String id = member.getId();
-		String pw = member.getPw();
+		String pw = hashUtils.getSHA256Encrypt(member.getPw());
 		System.out.println(id + " " + pw);
 		Map<String, Object> map = memberCheckLogin(id, pw);
 		return map;
-
 	}
 
 	private Map<String, Object> memberCheckLogin(String id, String pw) {
@@ -116,14 +134,15 @@ public class MemberController {
 	}
 
 	@PutMapping
-	public Map<String, Object> memberUpdate(@RequestBody Member member) {
+	public Map<String, Object> memberUpdate(@RequestBody Member member) throws NoSuchAlgorithmException {
+		HashUtils hashUtils = new HashUtils(); 
 		Map<String, Object> map = new HashMap<>();
 		int cnt = memberJpaRepo.countUserId(member.getId());
 		try {
 			if (cnt == 0) {
 				map.put("resultInfo", new ResultInfo(false, "E-005", "존재하지 않는 사용자입니다."));
 			} else {
-				memberJpaRepo.updateUser(member.getId(), member.getPw(), member.getName(), member.getPhone());
+				memberJpaRepo.updateUser(member.getId(), hashUtils.getSHA256Encrypt(member.getPw()), member.getName(), member.getPhone());
 				map.put("resultInfo", new ResultInfo(true, "S", "회원 정보 수정이 완료되었습니다."));
 			}
 		} catch (Exception e) {
@@ -133,14 +152,14 @@ public class MemberController {
 	}
 
 	@DeleteMapping
-	public Map<String, Object> memberDelete2(@RequestBody Member member) {
+	public Map<String, Object> memberDelete(@RequestParam(value = "id") String id) {
 		Map<String, Object> map = new HashMap<>();
-		int cnt = memberJpaRepo.countUserId(member.getId());
+		int cnt = memberJpaRepo.countUserId(id);
 		try {
 			if (cnt == 0) {
 				map.put("resultInfo", new ResultInfo(false, "E-005", "존재하지 않는 사용자입니다."));
 			} else {
-				memberJpaRepo.deleteUser(member.getId());
+				memberJpaRepo.deleteUser(id);
 				map.put("resultInfo", new ResultInfo(true, "S", "회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다."));
 			}
 		} catch (Exception e) {
