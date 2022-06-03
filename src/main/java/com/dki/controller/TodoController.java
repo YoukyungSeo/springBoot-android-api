@@ -49,7 +49,7 @@ public class TodoController {
 	@PutMapping
 	public String toggleTodo(@RequestBody Todo todo) {
 		log.info("할 일 체크");
-		todoJpaRepo.toggleTodo(todo.getItem(), todo.isCompleted());
+		todoJpaRepo.toggleTodo(todo.getTitle(), todo.isCompleted());
 		return "할 일 체크 완료";
 	}
 	

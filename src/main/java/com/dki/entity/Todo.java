@@ -27,10 +27,16 @@ public class Todo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long num;
 	
+	@Column(unique = true)
+	private String id;
+	
+	@NotEmpty
+	private String title;
+	
+	@Column
+	private String content;
+	
 	@Column
 	private boolean completed;
-
-	@NotEmpty
-	private String item;
 
 }
