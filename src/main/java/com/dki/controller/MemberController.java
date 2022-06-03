@@ -23,8 +23,8 @@ import com.dki.repository.MemberJpaRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.security.NoSuchAlgorithmException;
-import com.dki.util.HashUtils;
+//import java.security.NoSuchAlgorithmException;
+//import com.dki.util.HashUtils;
 
 @Slf4j
 @CrossOrigin
@@ -63,13 +63,13 @@ public class MemberController {
 	}
 
 	@PostMapping
-	public Map<String, Object> memberJoin(@RequestBody Member member) throws NoSuchAlgorithmException {
+	public Map<String, Object> memberJoin(@RequestBody Member member){
 		Map<String, Object> map = new HashMap<>();
 		try {
-			HashUtils hashUtils = new HashUtils();
-			String password = member.getPw();
-			System.out.println(password);
-			member.setPw(hashUtils.getSHA256Encrypt(password));
+//			HashUtils hashUtils = new HashUtils();
+//			String password = member.getPw();
+//			System.out.println(password);
+//			member.setPw(hashUtils.getSHA256Encrypt(password));
 			ResultInfo result = (ResultInfo) memberIdCheck(member).get("resultInfo");
 			if (result.getResult() == true) {
 				memberJpaRepo.save(member);
@@ -107,10 +107,11 @@ public class MemberController {
 	}
 
 	@PostMapping(value = "/login")
-	public Map<String, Object> memberLoginPost(@RequestBody Member member) throws NoSuchAlgorithmException {
-		HashUtils hashUtils = new HashUtils();
+	public Map<String, Object> memberLoginPost(@RequestBody Member member) {
+//		HashUtils hashUtils = new HashUtils();
 		String id = member.getId();
-		String pw = hashUtils.getSHA256Encrypt(member.getPw());
+		String pw = member.getPw();
+//		String pw = hashUtils.getSHA256Encrypt(member.getPw());
 		System.out.println(id + " " + pw);
 		Map<String, Object> map = memberCheckLogin(id, pw);
 		return map;
@@ -134,15 +135,15 @@ public class MemberController {
 	}
 
 	@PutMapping
-	public Map<String, Object> memberUpdate(@RequestBody Member member) throws NoSuchAlgorithmException {
-		HashUtils hashUtils = new HashUtils(); 
+	public Map<String, Object> memberUpdate(@RequestBody Member member){
+//		HashUtils hashUtils = new HashUtils(); 
 		Map<String, Object> map = new HashMap<>();
 		int cnt = memberJpaRepo.countUserId(member.getId());
 		try {
 			if (cnt == 0) {
 				map.put("resultInfo", new ResultInfo(false, "E-005", "존재하지 않는 사용자입니다."));
 			} else {
-				memberJpaRepo.updateUser(member.getId(), hashUtils.getSHA256Encrypt(member.getPw()), member.getName(), member.getPhone());
+				memberJpaRepo.updateUser(member.getId(), member.getPw(), member.getName(), member.getPhone());
 				map.put("resultInfo", new ResultInfo(true, "S", "회원 정보 수정이 완료되었습니다."));
 			}
 		} catch (Exception e) {
