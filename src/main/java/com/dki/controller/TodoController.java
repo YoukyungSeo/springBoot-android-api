@@ -1,6 +1,8 @@
 package com.dki.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,23 +36,39 @@ public class TodoController {
 	}
 
 	@PostMapping
-	public Todo registerTodo(@RequestBody Todo todo) {
+	public Map<String, Object> registerTodo(@RequestBody Todo todo) {
+		Map<String, Object> map = new HashMap<>();
 		log.info("할 일 추가");
-		return todoJpaRepo.save(todo);
+		Todo t = todoJpaRepo.save(todo);
+		map.put("todoInfo", t);
+		return map;
 	}
 
 	@DeleteMapping
-	public String deleteTodo(@RequestParam (value="item") String item) {
+	public String deleteTodo(@RequestParam (value="title") String title) {
 		log.info("할 일 삭제");
-		todoJpaRepo.deleteTodo(item);
+		todoJpaRepo.deleteTodo(title);
 		return "할 일 삭제 완료";
 	}
 
 	@PutMapping
-	public String toggleTodo(@RequestBody Todo todo) {
-		log.info("할 일 체크");
+	public Map<String, Object> toggleTodo(@RequestBody Todo todo) {
+		Map<String, Object> map = new HashMap<>();
 		todoJpaRepo.toggleTodo(todo.getTitle(), todo.isCompleted());
-		return "할 일 체크 완료";
+		Todo t = todoJpaRepo.getTodo(todo.getNum());
+		map.put("todoInfo", t);
+		log.info("할 일 체크");
+		return map;
+	}
+	
+	// 상세보기 수정
+	@PutMapping(value = "/detail")
+	public Map<String, Object> updateTodo(@RequestBody Todo todo){
+		Map<String, Object> map = new HashMap<>();
+		todoJpaRepo.updateTodo(todo.getNum(), todo.getTitle(), todo.getContent());
+		Todo t = todoJpaRepo.getTodo(todo.getNum());
+		map.put("todoInfo", t);
+		return map;
 	}
 	
 	@GetMapping
