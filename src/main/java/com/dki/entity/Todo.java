@@ -38,7 +38,7 @@ public class Todo {
 	@NotEmpty
 	private String title;
 	
-	@NotEmpty
+	@Column
 	private String content;
 	
 	@Column
